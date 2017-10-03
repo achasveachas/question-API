@@ -56,11 +56,11 @@ RSpec.describe "API::V1::Questions", type: :request do
         end
 
         it "question include asker info" do
-            expect(@body['question']['asker']).to include('id', 'name')
+            expect(@body['asker']).to include('id', 'name')
         end
 
         it "question include answer info" do
-            expect(@body['questions']['answers'][0]).to include('id', 'body', 'answerer')
+            expect(@body['answers'][0]).to include('id', 'body', 'answerer')
         end
     end
 
