@@ -1,3 +1,33 @@
+# Q & A App API
+
+## Overview
+
+This is an API for a Q & A app. Clients can retrieve public questions and their answers.
+
+## Usage
+
+Fork and clone the repo.
+
+Run `bundle install` and then `rake db:migrate`.
+
+Run `rails server` to fire up the server.
+
+The root endpoint can then be reached through http://localhost:3000/api/v1/
+
+Detailed instructions can be found in the [Documentation](doc/documentation.md)
+
+## Testing
+
+The API was built using TDD principles with RSpec.
+
+To run the test suite simply run `rspec` in the terminal.
+
+## Contact
+
+Yechiel Kalmenson can be contacted by email at [contact@yechiel.me](mailto:contact@yechiel.me), or through his website [Yechiel.me](http://yechiel.me). Links to his social media can be found on the site as well.
+
+---
+
 # Batteries 911 Rails Engineer Candidate Interview Project
 
 (This is a fork of the [Kaleo Rails Engineer Candidate Interview Project](https://github.com/batteries911/rails-interview-project).)
