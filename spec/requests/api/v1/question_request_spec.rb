@@ -18,15 +18,26 @@ RSpec.describe "API::V1::Questions", type: :request do
 
     describe "GET /questions" do
 
-        it "returns an array of questions" do
+        before(:each) do
             get "/api/v1/questions", headers: @headers_with_key
-            body = JSON.parse(response.body)
-
-            expect(response.status).to eq(200)
-            expect(body['questions']).to be_an(Array)
-            expect(body['questions'].size).to eq(3)
+            @response = response
+            @body = JSON.parse(@response.body)
         end
 
+        it "returns an array of questions" do
+
+            expect(@response.status).to eq(200)
+            expect(@body['questions']).to be_an(Array)
+            expect(@body['questions'].size).to eq(3)
+        end
+
+        it "questions include asker info" do
+            expect(@body['questions'][0]['asker']).to include('id', 'name')
+        end
+
+        it "questions include answer info" do
+            expect(@body['questions'][0]['answers'][0]).to include('id', 'body', 'answerer')
+        end
     end
 
     describe "GET /question/:id" do
