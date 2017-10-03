@@ -4,6 +4,7 @@ RSpec.describe "API::V1::Questions", type: :request do
 
     before(:each) do
         3.times {create(:answer)}
+        @question = Question.first
         @tenant = create(:tenant)
         @headers_with_key = {
             'Accept': 'application/json',
@@ -29,6 +30,7 @@ RSpec.describe "API::V1::Questions", type: :request do
             expect(@response.status).to eq(200)
             expect(@body['questions']).to be_an(Array)
             expect(@body['questions'].size).to eq(3)
+            expect(@body['questions'][0]).to include('id', 'title')            
         end
 
         it "questions include asker info" do
@@ -40,8 +42,26 @@ RSpec.describe "API::V1::Questions", type: :request do
         end
     end
 
-    describe "GET /question/:id" do
+    describe "GET /questions/:id" do
 
+        before(:each) do
+            get "/api/v1/questions/#{@question.id}", headers: @headers_with_key
+            @response = response
+            @body = JSON.parse(@response.body)
+        end
+
+        it "returns the requested question" do
+            expect(@response.status).to eq(200)
+            expect(@body['question']).to include('id', 'title')            
+        end
+
+        it "question include asker info" do
+            expect(@body['question']['asker']).to include('id', 'name')
+        end
+
+        it "question include answer info" do
+            expect(@body['questions']['answers'][0]).to include('id', 'body', 'answerer')
+        end
     end
 
 end
