@@ -52,9 +52,10 @@ RSpec.describe "API::V1::Questions", type: :request do
         describe "on failure" do
             it "returns a status of 401 if API key is not provided" do
                 get "/api/v1/questions", headers: @headers_without_key
+                @body = JSON.parse(response.body)
                 
                 expect(response.status).to eq(401)
-                expect(respons.body['errors']).to include("Incorrect API Key")
+                expect(@body['errors']).to include("Incorrect API Key")
             end
         end
     end
@@ -95,6 +96,14 @@ RSpec.describe "API::V1::Questions", type: :request do
                 get "/api/v1/questions/#{@private_question.id}", headers: @headers_with_key
                 
                 expect(response.status).to eq(404)
+            end
+
+            it "returns a status of 401 if API key is not provided" do
+                get "/api/v1/questions/#{@public_question.id}", headers: @headers_without_key
+                @body = JSON.parse(response.body)
+                
+                expect(response.status).to eq(401)
+                expect(@body['errors']).to include("Incorrect API Key")
             end
         end
     end
