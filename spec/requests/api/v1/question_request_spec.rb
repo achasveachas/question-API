@@ -4,7 +4,8 @@ RSpec.describe "API::V1::Questions", type: :request do
 
     before(:each) do
         3.times {create(:answer)}
-        @question = Question.first
+        @public_question = Question.first
+        @private_question = create(:question, private: true)
         @tenant = create(:tenant)
         @headers_with_key = {
             'Accept': 'application/json',
@@ -19,48 +20,73 @@ RSpec.describe "API::V1::Questions", type: :request do
 
     describe "GET /questions" do
 
-        before(:each) do
-            get "/api/v1/questions", headers: @headers_with_key
-            @response = response
-            @body = JSON.parse(@response.body)
-        end
+        describe "on success" do
 
-        it "returns an array of questions" do
+            before(:each) do
+                get "/api/v1/questions", headers: @headers_with_key
+                @response = response
+                @body = JSON.parse(@response.body)
+            end
 
-            expect(@response.status).to eq(200)
-            expect(@body['questions']).to be_an(Array)
-            expect(@body['questions'].size).to eq(3)
-            expect(@body['questions'][0]).to include('id', 'title')            
-        end
+            it "returns an array of questions" do
 
-        it "questions include asker info" do
-            expect(@body['questions'][0]['asker']).to include('id', 'name')
-        end
+                expect(@response.status).to eq(200)
+                expect(@body['questions']).to be_an(Array)
+                expect(@body['questions'][0]).to include('id', 'title')            
+            end
 
-        it "questions include answer info" do
-            expect(@body['questions'][0]['answers'][0]).to include('id', 'body', 'answerer')
+            it "questions include asker info" do
+                expect(@body['questions'][0]['asker']).to include('id', 'name')
+            end
+
+            it "questions include answer info" do
+                expect(@body['questions'][0]['answers'][0]).to include('id', 'body', 'answerer')
+            end
+
+            it "doesn't return private questions" do
+                expect(@body['questions'].last).not_to include('id' => @private_question.id)
+            end
+
         end
     end
 
     describe "GET /questions/:id" do
 
-        before(:each) do
-            get "/api/v1/questions/#{@question.id}", headers: @headers_with_key
-            @response = response
-            @body = JSON.parse(@response.body)
+        describe "on success" do
+
+            before(:each) do
+                get "/api/v1/questions/#{@public_question.id}", headers: @headers_with_key
+                @response = response
+                @body = JSON.parse(@response.body)
+            end
+
+            it "returns the requested question" do
+                expect(@response.status).to eq(200)
+                expect(@body['question']).to include('id', 'title')            
+            end
+
+            it "question include asker info" do
+                expect(@body['asker']).to include('id', 'name')
+            end
+
+            it "question include answer info" do
+                expect(@body['answers'][0]).to include('id', 'body', 'answerer')
+            end
         end
 
-        it "returns the requested question" do
-            expect(@response.status).to eq(200)
-            expect(@body['question']).to include('id', 'title')            
-        end
+        describe "on failure" do
 
-        it "question include asker info" do
-            expect(@body['asker']).to include('id', 'name')
-        end
+            it "returns a status of 404 if question doesn't exist" do
+                get "/api/v1/questions/invalid_id", headers: @headers_with_key
+                
+                expect(response.status).to eq(404)
+            end
 
-        it "question include answer info" do
-            expect(@body['answers'][0]).to include('id', 'body', 'answerer')
+            it "returns a status of 404 if question is private" do
+                get "/api/v1/questions/#{@private_question.id}", headers: @headers_with_key
+                
+                expect(response.status).to eq(404)
+            end
         end
     end
 
