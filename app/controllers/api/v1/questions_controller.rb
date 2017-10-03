@@ -3,13 +3,13 @@ class Api::V1::QuestionsController < ApplicationController
   after_action :increment_counter
 
   def index
-    @questions = Question.where(private: false)
+    @questions = Question.private_questions
     render 'questions/index.json.jbuilder', questions: @questions
   end
 
   def show
-    @question = Question.find_by(id: params[:id])
-    if @question&.private == false
+    @question = Question.private_questions(params[:id])
+    if @question
       render 'questions/show.json.jbuilder', question: @question
     else
       render json: {
