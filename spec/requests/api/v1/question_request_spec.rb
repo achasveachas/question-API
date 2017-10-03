@@ -7,6 +7,7 @@ RSpec.describe "API::V1::Questions", type: :request do
         @public_question = Question.first
         @private_question = create(:question, private: true)
         @tenant = create(:tenant)
+        @counter = @tenant.counter
         @headers_with_key = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -45,6 +46,10 @@ RSpec.describe "API::V1::Questions", type: :request do
 
             it "doesn't return private questions" do
                 expect(@body['questions'].last).not_to include('id' => @private_question.id)
+            end
+
+            it "increments the tenant's counter" do
+                expect(@tenant.counter).to eq(@counter + 1)
             end
 
         end
