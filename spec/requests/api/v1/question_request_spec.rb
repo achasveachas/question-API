@@ -48,6 +48,15 @@ RSpec.describe "API::V1::Questions", type: :request do
             end
 
         end
+
+        describe "on failure" do
+            it "returns a status of 401 if API key is not provided" do
+                get "/api/v1/questions", headers: @headers_without_key
+                
+                expect(response.status).to eq(401)
+                expect(respons.body['errors']).to include("Incorrect API Key")
+            end
+        end
     end
 
     describe "GET /questions/:id" do
