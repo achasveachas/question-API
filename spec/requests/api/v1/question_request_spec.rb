@@ -49,7 +49,8 @@ RSpec.describe "API::V1::Questions", type: :request do
             end
 
             it "increments the tenant's counter" do
-                expect(@tenant.counter).to eq(@counter + 1)
+                tenant = Tenant.find_by(id: @tenant.id)
+                expect(tenant.counter).to eq(@counter + 1)
             end
 
         end
