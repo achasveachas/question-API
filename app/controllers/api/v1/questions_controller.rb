@@ -1,5 +1,6 @@
 class Api::V1::QuestionsController < ApplicationController
   before_action :authorize
+  after_action :increment_counter
 
   def index
     @questions = Question.where(private: false)
