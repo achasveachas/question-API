@@ -9,6 +9,13 @@ RSpec.describe Question, type: :model do
         expect(@question.title).not_to be_nil
     end
 
+    it "defaults to public but can be set private" do
+        expect(@question.private).to be_falsey
+
+        @question.update_attributes(private: true)
+        expect(@question.private).to be(true)
+    end
+
     describe "relationships" do
         it "belongs to an asker" do
 
