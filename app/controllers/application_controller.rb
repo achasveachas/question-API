@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authorize
-    @tenant = Tenant.find_by(api_key: params[:headers][:Authorization]&.split(" ")&.last)
+    @tenant = Tenant.find_by(api_key: params[:authorization])
     if !@tenant
       render json: {
         errors: ["Incorrect API Key"]
