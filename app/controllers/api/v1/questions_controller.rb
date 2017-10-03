@@ -1,13 +1,13 @@
 class Api::V1::QuestionsController < ApplicationController
 
   def index
-    @questions = Question.all
+    @questions = Question.where(private: false)
     render 'questions/index.json.jbuilder', questions: @questions
   end
 
   def show
     @question = Question.find_by(id: params[:id])
-    if @question
+    if @question&.private == false
       render 'questions/show.json.jbuilder', question: @question
     else
       render json: {
